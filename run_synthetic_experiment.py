@@ -105,17 +105,22 @@ if __name__ == "__main__":
             calls_list.append(calls_in_iteration)
             rewards_list.append(rewards)
 
-        params_dict[dim] = params_list
-        calls_dict[dim] = calls_list
-        rewards_dict[dim] = rewards_list
+        params_dict[dim] = params_list          #list(n_obj, n_iteration + 1, Tensor[1, n_dim]))
+        calls_dict[dim] = calls_list            #list(1, n_iteration + 1)
+        rewards_dict[dim] = rewards_list        #list(1, n_iteration + 1)
+        # pdb.set_trace()
+
+    
 
     directory = cfg["out_dir"]
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    print(
-        f"Save parameters, objective calls and rewards (function values) at {directory}."
-    )
+    print(f"Save parameters, objective calls and rewards (function values) at {directory}.")
+    # n_iteration + 1 => the first one is init
     np.save(os.path.join(directory, "parameters"), params_dict)
+    # dict{n_dim: list(n_obj, n_iteration + 1, Tensor[1, n_dim])}
     np.save(os.path.join(directory, "calls"), calls_dict)
+    # dict{n_dim: list(1, n_iteration + 1)}
     np.save(os.path.join(directory, "rewards"), rewards_dict)
+    # dict{n_dim: list(1, n_iteration + 1)}
