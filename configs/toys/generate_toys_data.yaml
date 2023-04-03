@@ -1,7 +1,7 @@
 out_dir : './experiments/toys/test_experiment/'
-dimensions : [1, 2, 3, 4, 5]
+dimensions : [2, 5, 10, 20, 50, 100, 150]
 num_objectives : 1
-num_samples : 1000
+num_samples : 10
 noise_variance : 0.01
 factor_lengthscale : 2
 gamma : 0.3

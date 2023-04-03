@@ -3,7 +3,7 @@ method: gibo
 out_dir: './experiments/toys/test_experiment/gibo'
 
 # Either choose max_iterations or max_objective_calls not None.
-max_iterations: 2000
+max_iterations: 500
 max_objective_calls: 10 #300
 
 # Manually set hyperparameters.
@@ -12,9 +12,9 @@ only_set_noise_hyper: False
 
 optimizer_config: 
     max_samples_per_iteration: dim_search_space
-    OptimizerTorch: sgd
+    OptimizerTorch: adam
     optimizer_torch_config: 
-        lr: 0.01
+        lr: 0.005
     lr_schedular:
     Model: derivative_gp
     model_config:

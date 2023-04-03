@@ -87,9 +87,14 @@ if __name__ == "__main__":
                 factor_lengthscale=cfg_data["factor_lengthscale"],
                 factor_N_max=5,
                 hypers=None)
+            
+            x0 = np.zeros(dim)
+            x0[range(0, dim, 2)] = 0.6
+            x0[range(1, dim, 2)] = -.3
+            x0 = torch.Tensor(x0)
 
             x_out, fx_out, calls_in_iteration = loop(
-                params_init= 0.5*torch.ones(dim, dtype=torch.float32),
+                params_init= x0,
                 max_iterations=cfg_dim["max_iterations"],
                 max_objective_calls=cfg_dim["max_objective_calls"],
                 objective=objective,
@@ -105,8 +110,8 @@ if __name__ == "__main__":
 
             print(f"Save parameters, objective calls and rewards (function values) at {directory}.")
             # n_iteration + 1 => the first one is init
-            np.save(os.path.join(directory, "x_" + str(dim) + "_new2"), x_list)
+            np.save(os.path.join(directory, "x_" + str(dim) + ""), x_list)
             # dict{n_dim: list(n_obj, n_iteration + 1, Tensor[1, n_dim])}
-            np.save(os.path.join(directory, "fx_" + str(dim) + "_new2"), fx_list[0])
+            np.save(os.path.join(directory, "fx_" + str(dim) + ""), fx_list[0])
             # np.save(os.path.join(directory, "calls_"+dim), calls_list)
             # dict{n_dim: list(1, n_iteration + 1)}
