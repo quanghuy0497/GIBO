@@ -3,7 +3,7 @@ method: gibo
 out_dir: './experiments/toys/test_experiment/gibo'
 
 # Either choose max_iterations or max_objective_calls not None.
-max_iterations: 500
+max_iterations: 200
 max_objective_calls: 10 #300
 
 # Manually set hyperparameters.
