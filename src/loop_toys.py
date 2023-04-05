@@ -4,6 +4,7 @@ import torch
 
 from src.environment_api import EnvironmentObjective
 from src.gibo import BayesianGradientAscent
+from src.vanilla_bo import VanillaBayesianOptimization
 import pdb
 
 
@@ -57,6 +58,7 @@ def loop(
     calls_in_iteration = []
     objective_w_counter = call_counter(objective)
 
+    # optimizer = BayesianGradientAscent(params_init, objective_w_counter, **optimizer_config)
     optimizer = BayesianGradientAscent(params_init, objective_w_counter, **optimizer_config)
     if verbose:
         print(f"--- Iteration {0} ---")

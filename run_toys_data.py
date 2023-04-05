@@ -110,8 +110,8 @@ if __name__ == "__main__":
 
             print(f"Save parameters, objective calls and rewards (function values) at {directory}.")
             # n_iteration + 1 => the first one is init
-            np.save(os.path.join(directory, "x_" + str(dim) + ""), x_list)
+            np.save(os.path.join(directory, "x_" + str(dim) + "_BO"), x_list)
             # dict{n_dim: list(n_obj, n_iteration + 1, Tensor[1, n_dim])}
-            np.save(os.path.join(directory, "fx_" + str(dim) + ""), fx_list[0])
+            np.save(os.path.join(directory, "fx_" + str(dim) + "_BO"), fx_list[0])
             # np.save(os.path.join(directory, "calls_"+dim), calls_list)
             # dict{n_dim: list(1, n_iteration + 1)}

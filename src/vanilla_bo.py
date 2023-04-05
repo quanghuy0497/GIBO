@@ -1,12 +1,55 @@
-from typing import Dict, Callable, Optional, List
+from typing import Tuple, Dict, Callable, Iterator, Union, Optional, List
+
+from abc import ABC, abstractmethod
 
 import numpy as np
 import torch
 import gpytorch
 import botorch
+from botorch.models import SingleTaskGP
 
+from src.model import DerivativeExactGPSEModel
 from src.environment_api import EnvironmentObjective
-from src.model import ExactGPSEModel
+from src.acquisition_function import GradientInformation
+from src.model import ExactGPSEModel, DerivativeExactGPSEModel
+
+
+class AbstractOptimizer(ABC):
+    """Abstract optimizer class.
+
+    Sets a default optimizer interface.
+
+    Attributes:
+        params_init: Starting parameter configuration for the optimization.
+        objective: Objective to optimize, can be a function or a
+            EnvironmentObjective.
+        param_args_ignore: Which parameters should not be optimized.
+        optimizer_config: Configuration file for the optimizer.
+    """
+
+    def __init__(
+        self,
+        params_init: torch.Tensor,
+        objective: Union[Callable[[torch.Tensor], torch.Tensor], EnvironmentObjective],
+        param_args_ignore: List[int] = None,
+        **optimizer_config: Dict,
+    ):
+        """Inits the abstract optimizer."""
+        # Optionally add batchsize to parameters.
+        if len(params_init.shape) == 1:
+            params_init = params_init.reshape(1, -1)
+        self.params = params_init.clone()
+        self.param_args_ignore = param_args_ignore
+        self.objective = objective
+
+    def __call__(self):
+        """Call method of optimizers."""
+        self.step()
+
+    @abstractmethod
+    def step(self) -> None:
+        """One parameter update step."""
+        pass
 
 class VanillaBayesianOptimization(AbstractOptimizer):
     """Optimizer class for vanilla Bayesian optimization.
@@ -52,7 +95,7 @@ class VanillaBayesianOptimization(AbstractOptimizer):
         super(VanillaBayesianOptimization, self).__init__(params_init, objective)
 
         # Parameter initialization.
-        self.params_history_list = [self.params.clone()]
+        self.params_history_list = [self.params.clone().squeeze(0).numpy()]
         self.D = self.params.shape[-1]
 
         # Initialization of training data.
@@ -110,13 +153,13 @@ class VanillaBayesianOptimization(AbstractOptimizer):
         train_y = torch.cat([self.model.train_targets, new_y])
         self.model.set_train_data(inputs=train_x, targets=train_y, strict=False)
 
-        self.params_history_list.append(self.params)
+        tmp = self.params.clone()
+
+        self.params_history_list.append(tmp.squeeze(0).numpy())
+        
+
+        self.objective_history_list.append(self.objective(tmp).item())
 
         if self.verbose:
             posterior = self.model.posterior(self.params)
-            print(
-                f"Parameter {self.params.numpy()} with mean {posterior.mvn.mean.item(): .2f} and variance {posterior.mvn.variance.item(): .2f} of the posterior of the GP model."
-            )
-            print(
-                f"lengthscale: {self.model.covar_module.base_kernel.lengthscale.detach().numpy()}, outputscale: {self.model.covar_module.outputscale.detach().numpy(): .2f},  noise {self.model.likelihood.noise.detach().numpy()}"
-            )
+            print(f"  x: {self.params_history_list[-1]} {self.params_history_list[-1].shape} \n  f_x: {self.objective_history_list[-1]} \n  predicted mean {posterior.mvn.mean.item(): .2f}  \n  variance {posterior.mvn.variance.item(): .2f} of f(x_i).")
