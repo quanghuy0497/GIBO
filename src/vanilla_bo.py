@@ -41,6 +41,7 @@ class AbstractOptimizer(ABC):
         self.params = params_init.clone()
         self.param_args_ignore = param_args_ignore
         self.objective = objective
+        self.objective_history_list = []
 
     def __call__(self):
         """Call method of optimizers."""

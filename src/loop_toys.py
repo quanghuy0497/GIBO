@@ -35,6 +35,7 @@ def loop(
     max_objective_calls: Optional[int],
     objective: Union[Callable[[torch.Tensor], torch.Tensor], EnvironmentObjective],
     optimizer_config: Optional[Dict],
+    method: str,
     verbose=True,
 ) -> Tuple[list, list]:
     """Connects parameters with objective and optimizer.
@@ -57,9 +58,11 @@ def loop(
     """
     calls_in_iteration = []
     objective_w_counter = call_counter(objective)
-
-    # optimizer = BayesianGradientAscent(params_init, objective_w_counter, **optimizer_config)
-    optimizer = BayesianGradientAscent(params_init, objective_w_counter, **optimizer_config)
+    
+    if method == "gibo":
+        optimizer = BayesianGradientAscent(params_init, objective_w_counter, **optimizer_config)
+    elif method == "vbo":
+        optimizer = VanillaBayesianOptimization(params_init, objective_w_counter, **optimizer_config)
     if verbose:
         print(f"--- Iteration {0} ---")
         
