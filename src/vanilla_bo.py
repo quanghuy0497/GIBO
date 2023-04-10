@@ -139,7 +139,7 @@ class VanillaBayesianOptimization(AbstractOptimizer):
 
         # Optionally update best_f for acquistion function.
         if "best_f" in self.acqf_config.keys():
-            self.acqf_config["best_f"] = self.model.train_targets.max()
+            self.acqf_config["best_f"] = self.model.train_targets.min()
 
         # Optimize acquistion function and get new observation.
         new_x = self.optimize_acqf(
