@@ -91,8 +91,8 @@ if __name__ == "__main__":
                 hypers=None)
             
             x0 = np.zeros(dim)
-            x0[range(0, dim, 2)] = 0.6
-            x0[range(1, dim, 2)] = -.3
+            x0[range(0, dim, 2)] = 0.3
+            x0[range(1, dim, 2)] = -0.15
             x0 = torch.Tensor(x0)
 
             x_out, fx_out, calls_in_iteration = loop(

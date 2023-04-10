@@ -1,5 +1,5 @@
 out_dir : './experiments/toys/test_experiment/'
-dimensions : [1, 2, 5, 10, 20]
+dimensions : [50] #[1, 2, 5, 10, 20]
 num_objectives : 1
 num_samples : 10
 noise_variance : 0.01
